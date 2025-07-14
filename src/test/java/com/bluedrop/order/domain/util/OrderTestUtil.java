@@ -1,5 +1,7 @@
 package com.bluedrop.order.domain.util;
 
+import com.bluedrop.order.application.request.ItemRequest;
+import com.bluedrop.order.application.request.PlaceOrderRequest;
 import com.bluedrop.order.domain.Order;
 import com.bluedrop.order.domain.OrderStatus;
 import com.bluedrop.order.domain.valueobjects.*;
@@ -39,5 +41,18 @@ public class OrderTestUtil {
                         new Price(new BigDecimal("100.00"), "USD"))
         );
         return new Order(orderId, customerId, items);
+    }
+
+    public static PlaceOrderRequest getPlaceOrderRequest() {
+        UUID orderId1 = UUID.randomUUID();
+        UUID customerId1 = UUID.randomUUID();
+        List<ItemRequest> itemRequests = List.of(
+                new ItemRequest(UUID.randomUUID().toString(), "Test Product",
+                        new BigDecimal("99.99"), "USD")
+        );
+
+        PlaceOrderRequest placeRequest = new PlaceOrderRequest(orderId1.toString(), customerId1.toString(), itemRequests);
+        assert placeRequest.getCustomerId().equals(customerId1.toString()) : "PlaceOrderRequest should have correct customer ID";
+        return placeRequest;
     }
 }
