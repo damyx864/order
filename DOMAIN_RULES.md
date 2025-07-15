@@ -1,4 +1,4 @@
-## 📋 Domain Rules
+## Domain Rules
 
 ### Order Management Rules
 1. **Order Creation**
@@ -7,10 +7,10 @@
     - Initially set to PENDING status
 
 2. **State Transitions**
-    - PENDING → APPROVED ✅
-    - PENDING → CANCELLED ✅
-    - APPROVED → CANCELLED ❌
-    - CANCELLED → APPROVED ❌
+    - PENDING   → APPROVED   ✅
+    - PENDING   → CANCELLED  ✅
+    - APPROVED  → CANCELLED  ❌
+    - CANCELLED → APPROVED   ❌
 
 3. **Business Invariants**
     - Orders cannot be empty

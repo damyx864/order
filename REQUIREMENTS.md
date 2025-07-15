@@ -1,9 +1,9 @@
 # Clean Architecture Order Management (Java + Spring Boot)
 
-## 📝 Scenario
+## Scenario
 You're tasked with building and designing the core backend for a medical logistics order system. Your focus is to demonstrate clean code, test-driven development, DDD principles, and deployment awareness.
 
-## 🎯 Objective
+## Objective
 Build a backend service in Java using Spring Boot, TDD, and DDD. Propose how it could be deployed in a production cloud environment.
 
 ## 🛠 Functional Requirements
@@ -22,7 +22,7 @@ Build a backend service in Java using Spring Boot, TDD, and DDD. Propose how it 
 - Transitions **PENDING** → **CANCELLED**
 - ❌ Not valid if the order is already approved or canceled
 
-## ✅ Deliverables
+## Deliverables
 
 ### 1. Code
 - **Web API** and backend business logic
