@@ -1,5 +1,8 @@
 package com.bluedrop.order.domain;
 
+import com.bluedrop.order.application.request.PlaceOrderRequest;
+import com.bluedrop.order.application.response.ItemResponse;
+import com.bluedrop.order.application.response.OrderResponse;
 import com.bluedrop.order.domain.event.DomainEvent;
 import com.bluedrop.order.domain.event.OrderApprovedEvent;
 import com.bluedrop.order.domain.event.OrderCancelledEvent;
@@ -203,5 +206,30 @@ public class OrderTest {
         // Test clearing events
         order.clearDomainEvents();
         assert order.getDomainEvents().isEmpty() : "Domain events should be cleared";
+    }
+
+    @Test
+    public void testRestApiDtos() {
+        // Test PlaceOrderRequest
+        PlaceOrderRequest placeRequest = getPlaceOrderRequest();
+        assert placeRequest.getItems().size() == 1 : "PlaceOrderRequest should have correct items";
+
+        // Test OrderResponse conversion
+        Order order = createTestOrder();
+        OrderResponse orderResponse = new OrderResponse(order);
+
+        assert UUID.fromString(orderResponse.getOrderId()).equals(order.getOrderId().id()) : "OrderResponse should have correct order ID";
+        assert UUID.fromString(orderResponse.getCustomerId()).equals(order.getCustomerId().id()) : "OrderResponse should have correct customer ID";
+        assert orderResponse.getStatus().equals(order.getStatus().name()) : "OrderResponse should have correct status";
+        assert orderResponse.getItems().size() == order.getItems().size() : "OrderResponse should have correct number of items";
+
+        // Test ItemResponse conversion
+        Item item = order.getItems().getFirst();
+        ItemResponse itemResponse = new ItemResponse(item);
+
+        assert UUID.fromString(itemResponse.getProductId()).equals(item.productId().id()) : "ItemResponse should have correct product ID";
+        assert itemResponse.getProductName().equals(item.productName()) : "ItemResponse should have correct product name";
+        assert itemResponse.getPrice().equals(item.price().amount()) : "ItemResponse should have correct price";
+        assert itemResponse.getCurrency().equals(item.price().currency()) : "ItemResponse should have correct currency";
     }
 }

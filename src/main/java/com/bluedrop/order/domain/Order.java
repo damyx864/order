@@ -27,7 +27,7 @@ public class Order {
 
     private final OrderId orderId;
     private final CustomerId customerId;
-    private final LocalDateTime createdAt;
+    private final LocalDateTime dateCreated;
     private OrderStatus status;
     private final List<Item> items;
     private final List<DomainEvent> domainEvents;
@@ -45,7 +45,7 @@ public class Order {
 
         this.orderId = orderId;
         this.customerId = customerId;
-        this.createdAt = LocalDateTime.now();
+        this.dateCreated = LocalDateTime.now();
         this.items = new ArrayList<>(items);
         this.domainEvents = new ArrayList<>();
         // initial state of a new order
