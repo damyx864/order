@@ -5,9 +5,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
 
 jobs:
   build:
@@ -39,6 +39,7 @@ jobs:
 
     - name: Run security scan
       run: mvn -B dependency-check:check --file pom.xml
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       continue-on-error: true
 
       # Optional: Uploads the full dependency graph to GitHub
