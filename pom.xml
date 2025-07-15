@@ -15,6 +15,7 @@
 	<description>order</description>
 	<properties>
 		<java.version>21</java.version>
+		<dependency-check>12.1.0</dependency-check>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -68,6 +69,21 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>${dependency-check}</version>
+				<configuration>
+					<nvdApiKey>48cfe51f-5c16-4a33-9415-cee54a7018d2</nvdApiKey>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
