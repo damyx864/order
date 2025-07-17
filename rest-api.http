@@ -1,0 +1,204 @@
+
+### Variables
+@baseUrl = http://localhost:8080/api/orders
+@contentType = application/json
+
+### 1. Place Order (POST)
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "orderId": "550e8400-e29b-41d4-a716-446655440001",
+  "customerId": "550e8400-e29b-41d4-a716-446655440002",
+  "items": [
+    {
+      "productId": "550e8400-e29b-41d4-a716-446655440003",
+      "productName": "UltraVioletLamp",
+      "price": 999.99,
+      "currency": "USD"
+    },
+    {
+      "productId": "550e8400-e29b-41d4-a716-446655440004",
+      "productName": "WirelessThermometer",
+      "price": 25.50,
+      "currency": "USD"
+    },
+    {
+      "productId": "550e8400-e29b-41d4-a716-446655440044",
+      "productName": "WirelessThermometer",
+      "price": 25.50,
+      "currency": "USD"
+    }
+  ]
+}
+
+### 2. Place Order - Minimal Example
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "orderId": "550e8400-e29b-41d4-a716-446655440005",
+  "customerId": "550e8400-e29b-41d4-a716-446655440006",
+  "items": [
+    {
+      "productId": "550e8400-e29b-41d4-a716-446655440007",
+      "productName": "Product 1",
+      "price": 79.99,
+      "currency": "USD",
+      "quantity": 1
+    }
+  ]
+}
+
+### 3. Get Order by ID
+GET {{baseUrl}}/550e8400-e29b-41d4-a716-446655440001
+Accept: {{contentType}}
+
+### 4. Get Order by ID - Non-existent Order
+GET {{baseUrl}}/550e8400-e29b-41d4-a716-446655440999
+Accept: {{contentType}}
+
+### 5. Get Order by ID - Invalid UUID Format
+GET {{baseUrl}}/invalid-uuid
+Accept: {{contentType}}
+
+### 6. Approve Order
+PUT {{baseUrl}}/550e8400-e29b-41d4-a716-446655440001/approve
+Accept: {{contentType}}
+
+### 7. Approve Order - Non-existent Order
+PUT {{baseUrl}}/550e8400-e29b-41d4-a716-446655440999/approve
+Accept: {{contentType}}
+
+### 8. Approve Order - Invalid UUID Format
+PUT {{baseUrl}}/invalid-uuid/approve
+Accept: {{contentType}}
+
+### 9. Cancel Order
+PUT {{baseUrl}}/550e8400-e29b-41d4-a716-446655440001/cancel
+Accept: {{contentType}}
+
+### 10. Cancel Order - Non-existent Order
+PUT {{baseUrl}}/550e8400-e29b-41d4-a716-446655440999/cancel
+Accept: {{contentType}}
+
+### 11. Cancel Order - Invalid UUID Format
+PUT {{baseUrl}}/invalid-uuid/cancel
+Accept: {{contentType}}
+
+### 12. Get Orders by Customer ID
+GET {{baseUrl}}/customer/550e8400-e29b-41d4-a716-446655440002
+Accept: {{contentType}}
+
+### 13. Get Orders by Customer ID - Non-existent Customer
+GET {{baseUrl}}/customer/550e8400-e29b-41d4-a716-446655440999
+Accept: {{contentType}}
+
+### 14. Get Orders by Customer ID - Invalid UUID Format
+GET {{baseUrl}}/customer/invalid-uuid
+Accept: {{contentType}}
+
+### 15. End-to-End Flow Example
+### Step 1: Place a new order
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "orderId": "550e8400-e29b-41d4-a716-446655440010",
+  "customerId": "550e8400-e29b-41d4-a716-446655440011",
+  "items": [
+    {
+      "productId": "550e8400-e29b-41d4-a716-446655440012",
+      "productName": "Cochlear",
+      "price": 699.99,
+      "currency": "USD"
+    }
+  ]
+}
+
+### Step 2: Get the created order
+GET {{baseUrl}}/550e8400-e29b-41d4-a716-446655440010
+Accept: {{contentType}}
+
+### Step 3: Approve the order
+PUT {{baseUrl}}/550e8400-e29b-41d4-a716-446655440010/approve
+Accept: {{contentType}}
+
+### Step 4: Get the approved order
+GET {{baseUrl}}/550e8400-e29b-41d4-a716-446655440010
+Accept: {{contentType}}
+
+### Step 5: Get all orders for the customer
+GET {{baseUrl}}/customer/550e8400-e29b-41d4-a716-446655440011
+Accept: {{contentType}}
+
+### 16. Error Scenarios Testing
+### Negative price value
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "orderId": "550e8400-e29b-41d4-a716-446655440020",
+  "customerId": "550e8400-e29b-41d4-a716-446655440021",
+  "items": [
+    {
+      "productId": "550e8400-e29b-41d4-a716-446655440022",
+      "productName": "Cateter",
+      "price": -100.00,
+      "currency": "USD"
+    }
+  ]
+}
+
+### Missing required fields
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "orderId": "550e8400-e29b-41d4-a716-446655440023",
+  "customerId": "550e8400-e29b-41d4-a716-446655440024",
+  "items": []
+}
+
+### Invalid orderId format
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "orderId": "invalid-uuid",
+  "customerId": "550e8400-e29b-41d4-a716-446655440025",
+  "items": [
+    {
+      "productId": "550e8400-e29b-41d4-a716-446655440026",
+      "productName": "NoteDevice",
+      "price": 299.99,
+      "currency": "USD"
+    }
+  ]
+}
+
+### 17. Test State Transitions
+### Place order for state transition testing
+POST {{baseUrl}}
+Content-Type: {{contentType}}
+
+{
+  "orderId": "550e8400-e29b-41d4-a716-446655440030",
+  "customerId": "550e8400-e29b-41d4-a716-446655440031",
+  "items": [
+    {
+      "productId": "550e8400-e29b-41d4-a716-446655440032",
+      "productName": "SmartStethoscope",
+      "price": 149.99,
+      "currency": "USD"
+    }
+  ]
+}
+
+### Cancel the order (PENDING -> CANCELLED)
+PUT {{baseUrl}}/550e8400-e29b-41d4-a716-446655440030/cancel
+Accept: {{contentType}}
+
+### Try to approve cancelled order (should fail)
+PUT {{baseUrl}}/550e8400-e29b-41d4-a716-446655440030/approve
+Accept: {{contentType}}
