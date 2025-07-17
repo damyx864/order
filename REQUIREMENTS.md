@@ -12,7 +12,7 @@ Build a backend service in Java using Spring Boot, TDD, and DDD. Propose how it 
 
 #### 1. Place Order
 - Creates an order with **PENDING** status
-- 🔸 Order must include at least one item
+- Order must include at least one item
 
 #### 2. Approve Order
 - Transitions **PENDING** → **APPROVED**

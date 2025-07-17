@@ -62,16 +62,28 @@ Run tests with:
 ./mvnw test
 ```
 
-## 🏃 Running the Application
+## Running the Application
 
 1. **Prerequisites**
    - Java 21
    - Maven 3.6+
 
 2. **Build and Run**
+With Maven wrapper:
 ```shell script
 ./mvnw clean install
    ./mvnw spring-boot:run
+```
+
+With Maven:
+```shell script
+mvn -B package --file pom.xml
+mvn spring-boot:run
+```
+
+With Java:
+```shell script
+java -jar target/order-0.0.1-SNAPSHOT.jar
 ```
 
 3. **Access**
