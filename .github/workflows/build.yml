@@ -82,3 +82,4 @@ jobs:
         uses: advanced-security/maven-dependency-submission-action@v5
         with:
           ignore-maven-wrapper: 'true'
+          nvdApiKey: ${{ secrets.OWASP_NVD_API_KEY }}

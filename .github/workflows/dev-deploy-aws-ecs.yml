@@ -1,0 +1,51 @@
+# GitHub Actions workflow for building and deploying the Order application to Amazon ECS
+# Executes on pushes to develop branch and pull requests to develop
+name: Build and Deploy Order to ECS
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  build:
+
+    name: Build Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      # Configures AWS credentials for authentication
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      # Authenticates with Amazon ECR
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Generates image tag based on Git branch/ref
+      - id: docker-tag
+        uses: yuya-takeyama/docker-tag-from-github-ref-action@v1
+
+      # Builds Docker image, tags it and uploads to ECR
+      - name: Build, tag, and push image to Amazon ECR
+        id: docker-build
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: damyx864/order
+          IMAGE_TAG: ${{ steps.docker-tag.outputs.tag }}
+        run: |
+          # Builds Docker image with specified tag
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          # Pushes image to Amazon ECR
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
