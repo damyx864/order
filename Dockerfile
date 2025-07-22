@@ -2,7 +2,7 @@ FROM eclipse-temurin:21-ubi9-minimal
 
 WORKDIR /order
 
-COPY target/order*.jar order.jar
+COPY target/*.jar order.jar
 
 EXPOSE 8080
 
