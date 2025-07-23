@@ -9,8 +9,8 @@ This project follows Domain Driven Design (DDD) architecture with a clean separa
 
 src/main/java/com/bluedrop/order/
 ├── domain/                # Core business logic and domain model
-├── application/           # Application services and use cases
-├── infrastructure/        # Technical implementations and adapters
+├── application/           # API services and use cases
+├── infrastructure/        # Configuration implementations and database adapters
 └── OrderApplication.java  # Main Spring Boot application
 ```
 ## Project Structure Benefits
@@ -36,12 +36,12 @@ This project demonstrates a clean implementation of Domain Driven Design princip
 ## Key Features
 
 ### Business Capabilities
-- ✅ Create new orders
-- ✅ Retrieve order details
-- ✅ Approve orders
-- ✅ Cancel orders
-- ✅ Calculate order totals
-- ✅ Domain event publishing
+- Create new orders
+- Retrieve order details
+- Approve orders
+- Cancel orders
+- Calculate order totals
+- Domain event publishing
 
 ### Technical Capabilities
 - Clean architecture with DDD principles

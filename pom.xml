@@ -80,9 +80,6 @@
 				<groupId>org.owasp</groupId>
 				<artifactId>dependency-check-maven</artifactId>
 				<version>${dependency-check}</version>
-				<configuration>
-					<nvdApiKey>48cfe51f-5c16-4a33-9415-cee54a7018d2</nvdApiKey>
-				</configuration>
 				<executions>
 					<execution>
 						<goals>
