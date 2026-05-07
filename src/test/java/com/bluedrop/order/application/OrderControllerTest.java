@@ -35,6 +35,11 @@ import static org.mockito.Mockito.verify;
 @WebMvcTest(OrderController.class)
 public class OrderControllerTest {
 
+    public static final String API_ORDERS = "/api/orders";
+    public static final String API_ORDERS_ORDER_ID_APPROVE = "/api/orders/{orderId}/approve";
+    public static final String API_ORDERS_ORDER_ID_CANCEL = "/api/orders/{orderId}/cancel";
+    public static final String API_ORDERS_ORDER_ID = "/api/orders/{orderId}";
+    public static final String API_ORDERS_CUSTOMER_CUSTOMER_ID = "/api/orders/customer/{customerId}";
     @Autowired
     private MockMvc mockMvc;
 
@@ -76,7 +81,7 @@ public class OrderControllerTest {
                         anyList()))
                 .thenReturn(testOrder);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/orders")
+        mockMvc.perform(MockMvcRequestBuilders.post(API_ORDERS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testPlaceOrderRequest)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -95,7 +100,7 @@ public class OrderControllerTest {
         Mockito.when(orderService.placeOrder(any(OrderId.class), any(CustomerId.class), anyList()))
                 .thenThrow(new OrderBusinessException("Order already exists"));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/orders")
+        mockMvc.perform(MockMvcRequestBuilders.post(API_ORDERS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testPlaceOrderRequest)))
                 .andExpect(MockMvcResultMatchers.status().isConflict());
@@ -105,7 +110,7 @@ public class OrderControllerTest {
     void testPlaceOrder_NegativePrice() throws Exception {
         testPlaceOrderRequest.getItems().getFirst().setPrice(new BigDecimal("-100.00"));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/orders")
+        mockMvc.perform(MockMvcRequestBuilders.post(API_ORDERS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testPlaceOrderRequest)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -117,7 +122,7 @@ public class OrderControllerTest {
         Mockito.when(orderService.placeOrder(any(OrderId.class), any(CustomerId.class), anyList()))
                 .thenThrow(new IllegalArgumentException("Invalid order data"));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/orders")
+        mockMvc.perform(MockMvcRequestBuilders.post(API_ORDERS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testPlaceOrderRequest)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -125,7 +130,7 @@ public class OrderControllerTest {
 
     @Test
     void testPlaceOrder_InvalidJson() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/orders")
+        mockMvc.perform(MockMvcRequestBuilders.post(API_ORDERS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(""))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -138,7 +143,7 @@ public class OrderControllerTest {
                 testCustomerId.toString(),
                 Collections.emptyList());
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/orders")
+        mockMvc.perform(MockMvcRequestBuilders.post(API_ORDERS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(emptyItemsRequest)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -154,7 +159,7 @@ public class OrderControllerTest {
         Mockito.when(orderService.approveOrder(approvedOrder.getOrderId()))
                 .thenReturn(approvedOrder);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/orders/{orderId}/approve", testOrderId)
+        mockMvc.perform(MockMvcRequestBuilders.put(API_ORDERS_ORDER_ID_APPROVE, testOrderId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
@@ -167,7 +172,7 @@ public class OrderControllerTest {
         Mockito.doThrow(new OrderBusinessException("Order not found"))
                 .when(orderService).approveOrder(any(OrderId.class));
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/orders/{orderId}/approve", testOrderId)
+        mockMvc.perform(MockMvcRequestBuilders.put(API_ORDERS_ORDER_ID_APPROVE, testOrderId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
@@ -177,14 +182,14 @@ public class OrderControllerTest {
         Mockito.doThrow(new InvalidOrderStateTransitionException(OrderStatus.CANCELLED, OrderStatus.APPROVED))
                 .when(orderService).approveOrder(any(OrderId.class));
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/orders/{orderId}/approve", testOrderId)
+        mockMvc.perform(MockMvcRequestBuilders.put(API_ORDERS_ORDER_ID_APPROVE, testOrderId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isConflict());
     }
 
     @Test
     void testApproveOrder_InvalidUuid() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/orders/{orderId}/approve", "invalid-uuid")
+        mockMvc.perform(MockMvcRequestBuilders.put(API_ORDERS_ORDER_ID_APPROVE, "invalid-uuid")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
@@ -199,7 +204,7 @@ public class OrderControllerTest {
         Mockito.when(orderService.cancelOrder(cancelledOrder.getOrderId()))
                 .thenReturn(cancelledOrder);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/orders/{orderId}/cancel", testOrderId)
+        mockMvc.perform(MockMvcRequestBuilders.put(API_ORDERS_ORDER_ID_CANCEL, testOrderId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
@@ -212,7 +217,7 @@ public class OrderControllerTest {
         Mockito.doThrow(new OrderBusinessException("Order not found"))
                 .when(orderService).cancelOrder(any(OrderId.class));
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/orders/{orderId}/cancel", testOrderId)
+        mockMvc.perform(MockMvcRequestBuilders.put(API_ORDERS_ORDER_ID_CANCEL, testOrderId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
@@ -222,14 +227,14 @@ public class OrderControllerTest {
         Mockito.when(orderService.cancelOrder(any(OrderId.class)))
                 .thenThrow(new InvalidOrderStateTransitionException(OrderStatus.APPROVED, OrderStatus.CANCELLED));
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/orders/{orderId}/cancel", testOrderId)
+        mockMvc.perform(MockMvcRequestBuilders.put(API_ORDERS_ORDER_ID_CANCEL, testOrderId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isConflict());
     }
 
     @Test
     void testCancelOrder_InvalidUuid() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/orders/{orderId}/cancel", "invalid-uuid")
+        mockMvc.perform(MockMvcRequestBuilders.put(API_ORDERS_ORDER_ID_CANCEL, "invalid-uuid")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
@@ -239,7 +244,7 @@ public class OrderControllerTest {
         Mockito.when(orderService.findOrder(any(OrderId.class)))
                 .thenReturn(testOrder);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/orders/{orderId}", testOrderId)
+        mockMvc.perform(MockMvcRequestBuilders.get(API_ORDERS_ORDER_ID, testOrderId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
@@ -255,14 +260,14 @@ public class OrderControllerTest {
         Mockito.doThrow(new OrderBusinessException("Order not found"))
                 .when(orderService).findOrder(any(OrderId.class));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/orders/{orderId}", testOrderId)
+        mockMvc.perform(MockMvcRequestBuilders.get(API_ORDERS_ORDER_ID, testOrderId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
     void testGetOrder_InvalidUuid() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/orders/{orderId}", "invalid-uuid")
+        mockMvc.perform(MockMvcRequestBuilders.get(API_ORDERS_ORDER_ID, "invalid-uuid")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
@@ -273,7 +278,7 @@ public class OrderControllerTest {
         Mockito.when(orderService.findOrdersByCustomer(any(CustomerId.class)))
                 .thenReturn(orders);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/orders/customer/{customerId}", testCustomerId)
+        mockMvc.perform(MockMvcRequestBuilders.get(API_ORDERS_CUSTOMER_CUSTOMER_ID, testCustomerId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
@@ -288,7 +293,7 @@ public class OrderControllerTest {
         Mockito.when(orderService.findOrdersByCustomer(any(CustomerId.class)))
                 .thenReturn(Collections.emptyList());
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/orders/customer/{customerId}", testCustomerId)
+        mockMvc.perform(MockMvcRequestBuilders.get(API_ORDERS_CUSTOMER_CUSTOMER_ID, testCustomerId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
@@ -298,7 +303,7 @@ public class OrderControllerTest {
 
     @Test
     void testGetOrdersByCustomer_InvalidUuid() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/orders/customer/{customerId}", "invalid-uuid")
+        mockMvc.perform(MockMvcRequestBuilders.get(API_ORDERS_CUSTOMER_CUSTOMER_ID, "invalid-uuid")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
@@ -309,7 +314,7 @@ public class OrderControllerTest {
         Mockito.when(orderService.placeOrder(any(OrderId.class), any(CustomerId.class), anyList()))
                 .thenReturn(testOrder);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/orders")
+        mockMvc.perform(MockMvcRequestBuilders.post(API_ORDERS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testPlaceOrderRequest)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -324,7 +329,7 @@ public class OrderControllerTest {
         Mockito.when(orderService.approveOrder(any(OrderId.class)))
                 .thenReturn(approvedOrder);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/orders/{orderId}/approve", testOrderId)
+        mockMvc.perform(MockMvcRequestBuilders.put(API_ORDERS_ORDER_ID_APPROVE, testOrderId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("APPROVED"));
@@ -332,7 +337,7 @@ public class OrderControllerTest {
         // Step 3: Get order by ID
         Mockito.when(orderService.findOrder(any(OrderId.class)))
                 .thenReturn(approvedOrder);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/orders/{orderId}", testOrderId)
+        mockMvc.perform(MockMvcRequestBuilders.get(API_ORDERS_ORDER_ID, testOrderId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("APPROVED"));
@@ -341,7 +346,7 @@ public class OrderControllerTest {
         Mockito.when(orderService.findOrdersByCustomer(any(CustomerId.class)))
                 .thenReturn(List.of(approvedOrder));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/orders/customer/{customerId}", testCustomerId)
+        mockMvc.perform(MockMvcRequestBuilders.get(API_ORDERS_CUSTOMER_CUSTOMER_ID, testCustomerId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
@@ -376,7 +381,7 @@ public class OrderControllerTest {
         Mockito.when(orderService.placeOrder(any(OrderId.class), any(CustomerId.class), anyList()))
                 .thenReturn(multipleItemsOrder);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/orders")
+        mockMvc.perform(MockMvcRequestBuilders.post(API_ORDERS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(multipleItemsRequest)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
